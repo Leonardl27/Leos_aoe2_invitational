@@ -1,0 +1,36 @@
+# Python Code for analyzing the amount of wins required to advance to the
+# Second round, assuming 8 participants, 2 games apiece and a total of 14 games played
+# The Average wins of the 4th place team is 7.47 wins or so. 
+# Meaning if you can secure 8 victories in the round-robin you should feel comfortable
+# about making the playoffs.
+import random
+
+def generate_random_record(num_participants):
+    records = [{'wins': 0, 'losses': 0} for _ in range(num_participants)]
+
+    for i in range(num_participants):
+        for j in range(i + 1, num_participants):
+            for _ in range(2):  # Each participant plays each unique participant twice
+                match_result = random.choice([0, 1])  # 0 for player i wins, 1 for player j wins
+                if match_result == 0:
+                    records[i]['wins'] += 1
+                    records[j]['losses'] += 1
+                else:
+                    records[i]['losses'] += 1
+                    records[j]['wins'] += 1
+
+    return records
+
+num_participants = 8
+num_runs = 30
+fourth_highest_win_counts = []
+
+for run in range(num_runs):
+    random_records = generate_random_record(num_participants)
+    wins = sorted([record['wins'] for record in random_records], reverse=True)
+    fourth_highest_win_count = wins[3]  # Index 3 corresponds to the 4th highest win count
+    fourth_highest_win_counts.append(fourth_highest_win_count)
+
+# Calculate the average 4th highest win count
+average_fourth_highest_win_count = sum(fourth_highest_win_counts) / len(fourth_highest_win_counts)
+print(f"Average 4th highest win count across {num_runs} runs: {average_fourth_highest_win_count:.2f}")
